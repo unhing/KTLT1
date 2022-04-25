@@ -1,9 +1,9 @@
 import dearpygui.dearpygui as dpg
 import random
 word = ['python', 'coding', 'pycharm', 'apple', 'eye', ]
-fred=[]
+
 dpg.create_context()
-input_value=0
+
 def game():
     valid = '1'
     def space():
@@ -79,19 +79,44 @@ def game():
             valid = input('Invalid. Do you want to play again? Press 1 to play or 0 to exit: ')
 
 
-with dpg.window(tag="Primary Window"):
-    dpg.add_text("HANGMAN")
+def subject():
+    with dpg.window(tag='Subject Window', label='Subject', height=400, width=600):
+        dpg.add_text('Choose a subject', pos=(190, 30))
+        dpg.add_button(label='Animal', width=100, height=50, pos=(200, 60),callback= animal)
+        dpg.add_button(label='Food', width=100, height=50, pos=(200, 120),callback=food)
+        dpg.delete_item('Primary Window', children_only=True)
 
-    dpg.add_button(label = "Food",height= 50, width= 100, callback= game )
-    dpg.add_button(label='Animal', height= 50, width=100,callback= game )
-    #dpg.add_input_text(label="Foods",width= 100, weight= 50)
-#def inside(fred):
- #   with window("HANGMAN"):
-   #     if fred ==[]:
-    #        input_value = dpg.get_value('Food')
-     #       fred.append(input_value)
 
-dpg.create_viewport(title='Custom Title', width=600, height=200)
+def exit_game():
+    exit()
+
+def food():
+    with dpg.window(tag= 'Subject',label= 'Food', height= 400, width= 600):
+        dpg.add_text("Subject: Food", pos= (200,30))
+        dpg.add_text("Choose a letter:", pos=(200,0))
+        dpg.add_button(label= 'Guess full word', width= 100, height= 50, pos= (200,110))
+        dpg.add_text("Correct! The word has 3 letter(s): ",pos=(200,10))
+        dpg.add_text("Letter(s) you have chosen: ",pos=(200,10))
+        dpg.add_input_text(width= 200, height=50,pos=(0,50))
+        
+
+
+def animal():
+    with dpg.window(tag='Subject',label= 'Animal', height= 400, width= 600):
+        dpg.add_text("Subject: Animal", pos=(200,30))
+        dpg.add_text("Choose a letter: ", pos=(200,0))
+        dpg.add_button(label= "Guess full word", width= 100,height= 50, pos=(200,100))
+        dpg.add_text("Correct! The word has 3 letter(s): ",pos= (200,10))
+        dpg.add_text("Letter(s) you have chosen: ", pos=(200,10))
+        dpg.add_input_text(width= 200, height= 50, pos=(200,30))
+with dpg.window(tag='Primary Window'):
+    dpg.add_text('HANGMAN', pos=(200, 30))
+
+    dpg.add_button(label='Start', height=50, width=100, pos=(170, 50), callback=subject)
+    dpg.add_button(label='Exit', height=50, width=100, pos=(170, 110), callback=exit_game)
+
+
+dpg.create_viewport(title='HANGMAN', width=600, height=400)
 dpg.setup_dearpygui()
 dpg.show_viewport()
 dpg.set_primary_window("Primary Window", True)
