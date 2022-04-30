@@ -1,0 +1,164 @@
+import dearpygui.dearpygui as dpg
+from data import *
+
+dpg.create_context()
+
+# TẠO FONT
+with dpg.font_registry():
+    font_text = dpg.add_font("ROBOTOMONO-VARIABLEFONT_WGHT.ttf", 25, tag="font_text")
+    hangman_font = dpg.add_font("ROBOTOMONO-VARIABLEFONT_WGHT.ttf", 70, tag="hangman_font")
+    blank_font = dpg.add_font("ROBOTOMONO-VARIABLEFONT_WGHT.ttf", 60, tag="blank_font")
+
+
+def set_text_value(tag, text):
+    dpg.set_value(tag, text)
+
+
+def get_input_value(tag):
+    return dpg.get_value(tag)
+
+
+def game_play():
+    global tries , pick, ans
+    if tries < 9:
+        set_text_value("Letter", ''.join(ans))
+        letter = str(get_input_value("Input text")).upper()
+        set_text_value("Input text", '')    # tự động xóa sau khi nhập
+
+        if letter == pick:
+            return 0
+        if len(letter) > 1 or letter.isalpha() is False:
+            set_text_value("Announcement", "Invalid. Please choose a letter")
+        elif letter in lst_guess:
+            set_text_value("Announcement", "You have guessed this one. Please choose another letter")
+        else:
+            lst_guess.append(letter)
+            set_text_value("Have guessed", ' '.join(lst_guess))     # in ra kí tự đã nhập
+            count = 0
+            for i in range(len(pick)):
+                if letter == pick[i].upper():
+                    count += 1
+                    ans[i] = pick[i].upper()
+            if count > 0:
+                set_text_value("Announcement", f"The word has {count} letter(s) {letter}")
+                set_text_value("Letter", ''.join(ans))
+            else:
+                tries += 1
+                set_text_value("Announcement", f"Sorry, wrong character! You have {10 - tries} time(s) left")
+            if tries != 0:
+                set_text_value("HangMan", HANGMAN_PICS[tries - 1])
+            if '_' not in ans:
+                end_game()
+                lst_guess.clear()
+
+    else:
+        tries = 0
+        end_game()
+        set_text_value("End", f"You lost the game! The word was {pick.upper()}.")
+
+
+def full_word():
+    global tries
+    fullword = get_input_value("Full word")
+    set_text_value("Full word", "")     # tự động xóa sau khi nhập
+
+    if tries < 9:
+        if fullword == pick:
+            tries = 0
+            end_game()
+        else:
+            tries += 1
+            set_text_value("Announcement", f"Sorry, wrong character! You have {10 - tries} time(s) left")
+            set_text_value("HangMan", HANGMAN_PICS[tries - 1])
+    else:
+        tries = 0
+        end_game()
+        set_text_value("End", f"You lost the game! The word was {pick.upper()}.")
+
+
+def end_game():
+    with dpg.window(width=660, height=800, no_resize=True, no_collapse=True, no_move=True, no_title_bar=True, tag="Win game"):
+        dpg.delete_item("Play window")      # AI CODE THÌ THÊM CMT VÀO DÒNG NÀY
+
+        dpg.add_text(default_value=f"Congratulation! The word was {pick.upper()}.", tag="End", pos=(140, 300))
+        dpg.bind_item_font("End", "font_text")
+
+        dpg.add_button(label="Play again", tag="Play again", width=655, pos=(0, 370), callback=play_again)
+        dpg.bind_item_font("Play Again", "font_text")
+
+        dpg.add_button(label="Exit", tag="exitgame", width=655, pos=(0, 420), callback=exit_game)
+        dpg.bind_item_font("exitgame", "font_text")
+
+
+def play_again():
+    dpg.delete_item("Win game")     # AI CODE THÌ THÊM CMT VÀO DÒNG NÀY
+    dpg.enable_item("Start")        # AI CODE THÌ THÊM CMT VÀO DÒNG NÀY
+
+
+def play():
+    global pick, ans
+    with dpg.window(width=660, height=800, no_resize=True, no_collapse=True, no_move=True, no_title_bar=True, tag="Play window") as playWindow:
+        hangmanText = dpg.add_text(default_value="", tag="HangMan", pos=(30, 20))
+        fullwordText = dpg.add_text(default_value="Or you can guess the FULL WORD:", tag="Full word text", pos=(5, 500))
+        fullwordInput = dpg.add_input_text(tag="Full word", width=655, pos=(350, 500), on_enter=True, callback=full_word)
+
+        announce = dpg.add_text(default_value="Choose a letter!", tag="Announcement", pos=(5, 550))
+        letter = dpg.add_text(default_value="", tag="Letter", pos=(400, 150))
+        countLetters = dpg.add_text(default_value="", tag="Count", pos=(400, 230))
+
+        guessing = dpg.add_text(default_value="Type here to guess:", pos=(5, 450))
+        inputText = dpg.add_input_text(tag="Input text", width=655, pos=(220, 450), on_enter=True, callback=game_play)
+
+        guessed_letters = dpg.add_text(default_value="Letters have been guessed:", pos=(5, 600))
+        typed_letters = dpg.add_text(default_value="", tag="Have guessed", pos=(300, 600))
+
+        dpg.bind_item_font(hangmanText, "hangman_font")
+        dpg.bind_item_font(fullwordText, "font_text")
+        dpg.bind_item_font(fullwordInput, "font_text")
+        dpg.bind_item_font(announce, "font_text")
+        dpg.bind_item_font(letter, "blank_font")
+        dpg.bind_item_font(countLetters, "font_text")
+        dpg.bind_item_font(guessing, "font_text")
+        dpg.bind_item_font(inputText, "font_text")
+        dpg.bind_item_font(guessed_letters, "font_text")
+        dpg.bind_item_font(typed_letters, "font_text")
+
+        pick = words[random.randint(0, len(words) - 1)]
+        ans = space(pick)
+        print(pick)
+        print(ans)
+        set_text_value("Count", f"(There are {len(pick)} letters)")
+
+
+def chooseTopic():
+    with dpg.window(width=660, height=800, no_resize=True, no_collapse=True, no_move=True, no_title_bar=True) as topicWindow:
+        dpg.disable_item(startButton)   # AI CODE THÌ THÊM CMT VÀO DÒNG NÀY
+
+        topic = dpg.add_text(default_value="Choose the topic", pos=(235, 320))
+        animalButton = dpg.add_button(label="Animal", tag="Animal", width=655, pos=(0, 370), callback=play)
+        foodButton = dpg.add_button(label="Food", tag="Food", width=655, pos=(0, 420), callback=play)
+
+        dpg.bind_item_font(topic, "font_text")
+        dpg.bind_item_font(animalButton, "font_text")
+        dpg.bind_item_font(foodButton, "font_text")
+
+
+def exit_game():
+    exit()
+
+
+with dpg.window(tag="MainWindow", label="Nothing", width=660, height=800) as mainWindow:
+    dpg.add_text(tag="Hangman", default_value="HANGMAN", pos=(220, 230))
+    startButton = dpg.add_button(tag="Start", label="Start", width=660, pos=(0, 350), callback=chooseTopic)
+    exitButton = dpg.add_button(tag="Exit", label="Exit", width=660, pos=(0, 400), callback=exit_game)
+    dpg.bind_item_font("Hangman", "hangman_font")
+    dpg.bind_item_font("Start", "font_text")
+    dpg.bind_item_font("Exit", "font_text")
+
+
+dpg.create_viewport(title="HANGMAN", width=660, height=800, x_pos=350, y_pos=0)
+dpg.setup_dearpygui()
+dpg.show_viewport()
+dpg.set_primary_window("MainWindow", True)
+dpg.start_dearpygui()
+dpg.destroy_context()
