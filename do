@@ -76,16 +76,17 @@ class Hangman:
             end_game()
             dpg.set_value("End", f"You lost the game! The word was {self.pick.upper()}.")
 
-
-def popup_window(tag):
+def open_file(tag):
     file = tag + ".txt"
     with open(file, 'r') as f:
         text = f.read()
     f.close()
+    return text
 
+def popup_window(tag):
     with dpg.window(tag="popup_menu", width=400, height=500, no_collapse=True, no_resize=True, no_title_bar=True,
                     modal=True, pos=(120, 160)):
-        dpg.add_text(tag="window", default_value=text, wrap=380, pos=(15, 10))
+        dpg.add_text(tag="window", default_value=open_file(tag), wrap=380, pos=(15, 10))
         dpg.add_button(tag="OK", label="OK", width=100, pos=(150, 460), callback=ok_btn)
 
         dpg.bind_item_font("window", "text_font")
