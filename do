@@ -1,8 +1,11 @@
 import dearpygui.dearpygui as dpg
 import random
+
 from pics import *
 
 dpg.create_context()
+
+
 
 class Hangman:
     def __init__(self, tag):
@@ -54,7 +57,7 @@ class Hangman:
 
     def pic(self):
         if self.tries != 0:
-            dpg.set_value("HangMan", HANGMAN_PICS[self.tries - 1])  # IN HÌNH HANGMAN
+            dpg.set_value("HangMan", HANGMAN_PICS[self.tries - 1])      # IN HÌNH HANGMAN
 
     def full_word(self):
         fullword = dpg.get_value("Full word")
@@ -70,11 +73,12 @@ class Hangman:
             else:
                 self.tries += 1
                 dpg.set_value("Announcement", f"Sorry, wrong guess! You have {10 - self.tries} time(s) left!")
-                dpg.set_value("HangMan", HANGMAN_PICS[self.tries - 1])  # IN HÌNH
+                dpg.set_value("HangMan", HANGMAN_PICS[self.tries - 1])     # IN HÌNH
         else:
             self.tries = 0
             end_game()
             dpg.set_value("End", f"You lost the game! The word was {self.pick.upper()}.")
+
 
 def open_file(tag):
     file = tag + ".txt"
@@ -88,14 +92,13 @@ def popup_window(tag):
                     modal=True, pos=(120, 160)):
         dpg.add_text(tag="window", default_value=open_file(tag), wrap=380, pos=(15, 10))
         dpg.add_button(tag="OK", label="OK", width=100, pos=(150, 460), callback=ok_btn)
-
+    
         dpg.bind_item_font("window", "text_font")
         dpg.bind_item_font("OK", "menu_font")
 
-
 def choose_topic():
     with dpg.window(width=660, height=800, no_resize=True, no_collapse=True, no_move=True, no_title_bar=True):
-        dpg.disable_item("Start")  # VÔ HIỆU HÓA WINDOW
+        dpg.disable_item("Start")   # VÔ HIỆU HÓA WINDOW
 
         dpg.add_text(default_value="CHOOSE THE TOPIC", tag="Topic", pos=(235, 320))
 
@@ -111,6 +114,13 @@ def play(tag):
     with dpg.window(width=660, height=800, no_resize=True, no_collapse=True, no_move=True, no_title_bar=True,
                     tag="Play window"):
         word = Hangman(tag)
+
+        with dpg.menu_bar():        # TẠO MENU BAR
+            dpg.add_menu_item(label="Reset", tag="restart", callback=reset_game_menu)
+            dpg.bind_item_font("restart", "menu_font")
+
+            dpg.add_menu_item(label="Exit", tag="Exit menu", callback=ask_exit_window)
+            dpg.bind_item_font("Exit menu", "menu_font")
 
         dpg.add_text(default_value="", tag="HangMan", pos=(30, 20))
 
@@ -145,9 +155,8 @@ def play(tag):
 
 
 def end_game():
-    with dpg.window(tag="End game", width=660, height=800, no_resize=True, no_collapse=True, no_move=True,
-                    no_title_bar=True):
-        dpg.delete_item("Play window")  # XÓA "PLAY WINDOW"
+    with dpg.window(tag="End game", width=660, height=800, no_resize=True, no_collapse=True, no_move=True, no_title_bar=True):
+        dpg.delete_item("Play window")      # XÓA "PLAY WINDOW"
 
         dpg.add_text(default_value="", tag="End", pos=(140, 300))
         dpg.bind_item_font("End", "text_font")
@@ -160,12 +169,15 @@ def end_game():
 
 
 def play_again():
-    dpg.delete_item("End game")  # XÓA "END GAME WINDOW"
-    dpg.enable_item("Start")  # KHỞI TẠO LẠI TRÒ CHƠI (SAU KHI BẤM NÚT START)
+    dpg.delete_item("End game")     # XÓA "END GAME WINDOW"
+    dpg.enable_item("Start")        # KHỞI TẠO LẠI TRÒ CHƠI (SAU KHI BẤM NÚT START)
+
+def reset_game_menu():
+    dpg.delete_item("Play window")  # XÓA "PLAY WINDOW"
+    dpg.enable_item("Start")        # KHỞI TẠO LẠI TRÒ CHƠI (SAU KHI BẤM NÚT START)
 
 def exit_game():
     exit()
-
 
 def ask_exit_window():
     with dpg.window(tag="Popup window", width=400, height=200, no_collapse=True, no_resize=True, no_title_bar=True,
@@ -179,12 +191,10 @@ def ask_exit_window():
         dpg.bind_item_font("OK btn", "menu_font")
         dpg.bind_item_font("Cancel btn", "menu_font")
 
-
-def cancel_btn():  # DÙNG CHO POPUP WINDOW
+def cancel_btn():   # DÙNG CHO POPUP WINDOW
     dpg.delete_item("Popup window")
 
-
-def ok_btn():  # DÙNG CHO POPUP Ở MAIN MENU
+def ok_btn():       # DÙNG CHO POPUP Ở MAIN MENU
     dpg.delete_item("popup_menu")
 
 
@@ -195,6 +205,7 @@ with dpg.font_registry():
     dpg.add_font("ROBOTOMONO-VARIABLEFONT_WGHT.ttf", 35, tag="topic_font")
     dpg.add_font("ROBOTOMONO-VARIABLEFONT_WGHT.ttf", 70, tag="hangman_font")
     dpg.add_font("ROBOTOMONO-VARIABLEFONT_WGHT.ttf", 60, tag="blank_font")
+
 
 with dpg.window(tag="MainWindow", width=660, height=750) as mainWindow:
     dpg.add_text(tag="Hangman", default_value="HANGMAN", pos=(220, 230))
@@ -208,6 +219,7 @@ with dpg.window(tag="MainWindow", width=660, height=750) as mainWindow:
     dpg.bind_item_font("how_to_play", "text_font")
     dpg.bind_item_font("about", "text_font")
     dpg.bind_item_font("Exit", "text_font")
+
 
 dpg.create_viewport(title="HANGMAN", width=660, height=750, x_pos=350, y_pos=0)
 dpg.setup_dearpygui()
