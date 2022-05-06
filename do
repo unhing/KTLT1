@@ -1,11 +1,11 @@
 import dearpygui.dearpygui as dpg
 import random
-
+import playsound
 from pics import *
 
 dpg.create_context()
 
-
+playsound.playsound("music.mp3",False)
 
 class Hangman:
     def __init__(self, tag):
