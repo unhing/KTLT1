@@ -79,14 +79,15 @@ class Hangman:
             end_game()
             dpg.set_value("End", f"You lost the game! The word was {self.pick.upper()}.")
 
-
+#ĐỌC FILE TỪ VỰNG 
 def open_file(tag):
     file = tag + ".txt"
     with open(file, 'r') as f:
         text = f.read()
     f.close()
     return text
-
+   
+#TẠO KÍCH THƯỚC GIAO DIỆN CHÍNH CHO GAMEPLAY
 def popup_window(tag):
     with dpg.window(tag="popup_menu", width=400, height=500, no_collapse=True, no_resize=True, no_title_bar=True,
                     modal=True, pos=(120, 160)):
@@ -96,6 +97,7 @@ def popup_window(tag):
         dpg.bind_item_font("window", "text_font")
         dpg.bind_item_font("OK", "menu_font")
 
+#CHỌN CHỦ ĐỀ CHO TRÒ CHƠI
 def choose_topic():
     with dpg.window(width=660, height=800, no_resize=True, no_collapse=True, no_move=True, no_title_bar=True):
         dpg.disable_item("Start")   # VÔ HIỆU HÓA WINDOW
@@ -153,7 +155,7 @@ def play(tag):
         dpg.bind_item_font("Guessed letters", "text_font")
         dpg.bind_item_font("Have guessed", "text_font")
 
-
+#TẠO BẢNG THÔNG BÁO KẾT THÚC GAME VÀ HỎI XEM NGƯỜI DÙNG MUỐN CHƠI LẠI HAY THOÁT GAME
 def end_game():
     with dpg.window(tag="End game", width=660, height=800, no_resize=True, no_collapse=True, no_move=True, no_title_bar=True):
         dpg.delete_item("Play window")      # XÓA "PLAY WINDOW"
@@ -167,7 +169,7 @@ def end_game():
         dpg.add_button(label="Exit", tag="exitgame", width=655, pos=(0, 420), callback=ask_exit_window)
         dpg.bind_item_font("exitgame", "text_font")
 
-
+#TÍNH NĂNG CHƠI LẠI 
 def play_again():
     dpg.delete_item("End game")     # XÓA "END GAME WINDOW"
     dpg.enable_item("Start")        # KHỞI TẠO LẠI TRÒ CHƠI (SAU KHI BẤM NÚT START)
@@ -176,6 +178,7 @@ def reset_game_menu():
     dpg.delete_item("Play window")  # XÓA "PLAY WINDOW"
     dpg.enable_item("Start")        # KHỞI TẠO LẠI TRÒ CHƠI (SAU KHI BẤM NÚT START)
 
+# TÍNH NĂNG THOÁT GAME
 def exit_game():
     exit()
 
