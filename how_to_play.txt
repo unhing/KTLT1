@@ -1,0 +1,7 @@
+	   HOW TO PLAY HANGMAN
+
+- Once the word has been chosen and you know how many letters in the secret word, begin guessing which letters are in the word.
+
+- The letter in the blanks will be filled if you guess correctly. Part of the "hangman" will be drawn when you guess wrong.
+
+- If you get every letter of the word before the drawing finished then you win. You only have 10 times to guess the word so be careful.
